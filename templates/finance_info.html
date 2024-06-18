@@ -24,7 +24,13 @@
                     <td>{{ finance[2] }}</td>
                     <td>{{ finance[3] }}</td>
                     <td>{{ finance[4] }}</td>
-                    <td>{{ finance[5] }}</td>
+                    <td>
+                        {% if finance[5] == 'income' %}
+                            Przychód
+                        {% elif finance[5] == 'expense' %}
+                            Wydatek
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -136,45 +136,6 @@ def api_task_info():
     return jsonify({'success': True, 'tasks': tasks_list})
 
 
-@app.route('/task-detail/<int:task_id>')
-def task_detail(task_id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    db = get_db()
-    c = db.cursor()
-    c.execute('SELECT * FROM tasks WHERE id=? AND user_id=?', (task_id, session['user_id']))
-    task = c.fetchone()
-    if not task:
-        return 'Task not found', 404
-    return render_template('task_detail.html', task=task)
-
-@app.route('/edit_tasks')
-def edit_tasks():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    db = get_db()
-    c = db.cursor()
-    c.execute('SELECT id, title FROM tasks WHERE user_id=?', (session['user_id'],))
-    tasks = c.fetchall()
-    return render_template('edit_tasks.html', tasks=tasks)
-
-@app.route('/edit_task/<int:task_id>', methods=['GET', 'POST'])
-def edit_task(task_id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    db = get_db()
-    c = db.cursor()
-    if request.method == 'POST':
-        data = request.form
-        c.execute('''UPDATE tasks SET title=?, description=?, due_date=?, is_completed=? WHERE id=? AND user_id=?''',
-                  (data['title'], data['description'], data['due_date'], 'is_completed' in data, task_id, session['user_id']))
-        db.commit()
-        return redirect(url_for('edit_tasks'))
-    c.execute('SELECT * FROM tasks WHERE id=? AND user_id=?', (task_id, session['user_id']))
-    task = c.fetchone()
-    if not task:
-        return 'Task not found', 404
-    return render_template('edit_task.html', task=task)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():

@@ -21,7 +21,7 @@
             <tbody id="task-list">
                 {% for task in tasks %}
                 <tr>
-                    <td><a href="/task-detail/{{ task[0] }}">{{ task[1] }}</a></td>
+                    <td>{{ task[1] }}</td>
                     <td>{{ task[2] }}</td>
                     <td>{{ task[3] }}</td>
                     <td>{{ 'Tak' if task[4] else 'Nie' }}</td>

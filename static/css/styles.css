@@ -67,7 +67,11 @@ form label {
 
 form input[type="text"],
 form input[type="password"],
-form input[type="email"] {
+form input[type="email"],
+form input[type="number"],
+form input[type="date"],
+form textarea,
+form select {
     width: calc(100% - 20px);
     padding: 10px;
     margin: 5px 0;
@@ -134,18 +138,18 @@ button:hover {
 
 /* Logout Button */
 .logout-button {
-    background-color: #ff6f61; /* Kolor tła */
-    color: #fff; /* Kolor tekstu */
-    padding: 10px 20px; /* Wewnętrzne odstępy */
-    border: none; /* Brak obramowania */
-    border-radius: 4px; /* Zaokrąglenie rogów */
-    cursor: pointer; /* Wskaźnik kursora */
-    font-size: 16px; /* Rozmiar czcionki */
-    margin: 10px 0; /* Odstępy zewnętrzne */
+    background-color: #ff6f61;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px 0;
 }
 
 .logout-button:hover {
-    background-color: #e65c54; /* Zmiana koloru na najechanie */
+    background-color: #e65c54;
 }
 
 /* Table */
@@ -200,4 +204,5 @@ a:hover {
     text-decoration: underline;
     color: #ffffff;
 }
+
 
