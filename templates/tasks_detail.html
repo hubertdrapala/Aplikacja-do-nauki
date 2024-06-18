@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Szczegóły Zadania</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Szczegóły Zadania</h1>
+        <h2>{{ task.title }}</h2>
+        <p>{{ task.description }}</p>
+        <p>Data zakończenia: {{ task.due_date }}</p>
+        <p>Status: {{ 'Zrobione' if task.is_completed else 'Niezrobione' }}</p>
+        <button onclick="window.location.href='/edit-tasks'">Edytuj</button>
+    </div>
+</body>
+</html>

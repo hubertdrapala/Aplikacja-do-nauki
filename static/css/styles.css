@@ -1,0 +1,203 @@
+/* Global Styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #282c34;
+    color: #ddd;
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin: 0 0 10px;
+    padding: 0;
+}
+
+p {
+    margin: 0 0 10px;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    width: 80%;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #373d48;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+/* Navigation */
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: #61dafb;
+}
+
+nav ul li a:hover {
+    text-decoration: underline;
+    color: #ffffff;
+}
+
+/* Forms */
+form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #464c56;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+}
+
+form label {
+    display: block;
+    margin: 10px 0 5px;
+    color: #ddd;
+}
+
+form input[type="text"],
+form input[type="password"],
+form input[type="email"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 5px 0;
+    box-sizing: border-box;
+    background-color: #565c66;
+    border: 1px solid #666;
+    color: #ddd;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+form button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #61dafb;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+form button[type="submit"]:hover {
+    background-color: #007acc;
+}
+
+/* Lists */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+ul li {
+    background-color: #464c56;
+    margin: 10px 0;
+    padding: 15px;
+    border: 1px solid #666;
+    cursor: pointer;
+    color: #ddd;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+ul li:hover {
+    background-color: #565c66;
+}
+
+/* Buttons */
+button {
+    display: inline-block;
+    margin: 5px 0;
+    padding: 10px 15px;
+    background-color: #61dafb;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #007acc;
+}
+
+/* Logout Button */
+.logout-button {
+    background-color: #ff6f61; /* Kolor tła */
+    color: #fff; /* Kolor tekstu */
+    padding: 10px 20px; /* Wewnętrzne odstępy */
+    border: none; /* Brak obramowania */
+    border-radius: 4px; /* Zaokrąglenie rogów */
+    cursor: pointer; /* Wskaźnik kursora */
+    font-size: 16px; /* Rozmiar czcionki */
+    margin: 10px 0; /* Odstępy zewnętrzne */
+}
+
+.logout-button:hover {
+    background-color: #e65c54; /* Zmiana koloru na najechanie */
+}
+
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #373d48;
+}
+
+table, th, td {
+    border: 1px solid #666;
+}
+
+th, td {
+    padding: 15px;
+    text-align: left;
+}
+
+th {
+    background-color: #464c56;
+    color: #ddd;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+td {
+    background-color: #565c66;
+    color: #ddd;
+    transition: background-color 0.3s ease;
+}
+
+tr:hover td {
+    background-color: #666c76;
+}
+
+thead {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+tbody tr:nth-child(even) {
+    background-color: #515861;
+}
+
+a {
+    color: #61dafb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: #ffffff;
+}
+

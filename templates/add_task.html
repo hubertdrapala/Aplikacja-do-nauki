@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dodaj Zadanie</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Dodaj Zadanie</h1>
+        <form id="add-task-form">
+            <label for="title">Tytuł:</label>
+            <input type="text" id="title" name="title" required>
+            
+            <label for="description">Opis:</label>
+            <textarea id="description" name="description" required></textarea>
+            
+            <label for="due-date">Data zakończenia:</label>
+            <input type="date" id="due-date" name="due_date" required>
+            
+            <button type="submit">Dodaj Zadanie</button>
+        </form>
+    </div>
+    <script src="../static/js/scripts.js"></script>
+</body>
+</html>
+
+

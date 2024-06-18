@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizator Życia Codziennego</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Witaj w Aplikacji Organizator Życia Codziennego</h1>
+        <nav>
+            <ul>
+                <li><a href="/add_task">Dodaj Zadanie</a></li>
+                <li><a href="/check_finances">Nowy wydatek/przychód</a></li>
+                <li><a href="/task_info">Informacje o Zadaniach</a></li>
+                <li><a href="/finance_info">Finanse</a></li>
+                {% if session.username %}
+                    <li><a href="javascript:void(0)" id="logout-button">Wyloguj się</a></li>
+                    <li>Zalogowany jako: {{ session.username }}</li>
+                {% else %}
+                    <li><a href="/register">Rejestracja</a></li>
+                    <li><a href="/login">Logowanie</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    <script src="../static/js/scripts.js"></script>
+</body>
+</html>
+
