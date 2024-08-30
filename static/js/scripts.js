@@ -1,6 +1,6 @@
 console.log('scripts.js is loaded');
 
-// Obsługa formularza rejestracji
+// Handle registration form
 document.getElementById('register-form')?.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -10,23 +10,16 @@ document.getElementById('register-form')?.addEventListener('submit', function(ev
 
     fetch('/register', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, username, password })
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => { throw new Error(data.message); });
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.success) {
             alert('Rejestracja zakończona pomyślnie.');
             window.location.href = '/login';
         } else {
-            alert('Wystąpił błąd podczas rejestracji.');
+            alert('Wystąpił błąd podczas rejestracji: ' + data.message);
         }
     })
     .catch(error => {
@@ -35,7 +28,7 @@ document.getElementById('register-form')?.addEventListener('submit', function(ev
     });
 });
 
-// Obsługa formularza logowania
+// Handle login form
 document.getElementById('login-form')?.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -44,23 +37,16 @@ document.getElementById('login-form')?.addEventListener('submit', function(event
 
     fetch('/login', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => { throw new Error(data.message); });
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         if (data.success) {
             alert('Logowanie zakończone pomyślnie.');
             window.location.href = '/';
         } else {
-            alert('Błędna nazwa użytkownika lub hasło.');
+            alert('Błędna nazwa użytkownika lub hasło: ' + data.message);
         }
     })
     .catch(error => {
@@ -69,8 +55,7 @@ document.getElementById('login-form')?.addEventListener('submit', function(event
     });
 });
 
-// Obsługa formularza dodawania zadania
-// Obsługa formularza dodawania zadania
+// Handle task addition form
 document.getElementById('add-task-form')?.addEventListener('submit', function(event) {
     event.preventDefault();
 
@@ -78,37 +63,29 @@ document.getElementById('add-task-form')?.addEventListener('submit', function(ev
     const description = document.getElementById('description').value;
     const dueDate = document.getElementById('due-date').value;
 
-    console.log('Formularz wysłany:', { title, description, dueDate }); // Dodane logowanie
+    console.log('Formularz wysłany:', { title, description, dueDate });
 
     fetch('/api/add_task', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title, description, due_date: dueDate })
     })
-    .then(response => {
-        console.log('Odpowiedź z serwera:', response); // Dodane logowanie
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        console.log('Odpowiedź JSON:', data); // Dodane logowanie
+        console.log('Odpowiedź JSON:', data);
         if (data.success) {
             alert('Zadanie dodane pomyślnie.');
-            window.location.href = '/';
+            window.location.href = '/task_info';
         } else {
-            alert('Wystąpił błąd podczas dodawania zadania.');
+            alert('Wystąpił błąd podczas dodawania zadania: ' + data.error);
         }
     })
     .catch(error => {
-        console.error('There has been a problem with your fetch operation:', error);
+        console.error('Wystąpił problem z operacją fetch:', error);
     });
 });
 
-// Pobieranie listy zadań
+// Fetch task list
 function fetchTaskList() {
     fetch('/api/task_info')
         .then(response => response.json())
@@ -119,12 +96,10 @@ function fetchTaskList() {
 
                 data.tasks.forEach(task => {
                     const tr = document.createElement('tr');
+                    tr.setAttribute('data-task-id', task.id);
 
                     const title = document.createElement('td');
-                    const a = document.createElement('a');
-                    a.href = `/task-detail/${task.id}`;
-                    a.textContent = task.title;
-                    title.appendChild(a);
+                    title.textContent = task.title;
 
                     const description = document.createElement('td');
                     description.textContent = task.description;
@@ -135,24 +110,108 @@ function fetchTaskList() {
                     const isCompleted = document.createElement('td');
                     isCompleted.textContent = task.is_completed ? 'Tak' : 'Nie';
 
+                    const editButton = document.createElement('button');
+                    editButton.textContent = 'Edytuj';
+                    editButton.className = 'edit-task';
+
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Usuń';
+                    deleteButton.className = 'delete-task';
+
+                    const actionsTd = document.createElement('td');
+                    actionsTd.appendChild(editButton);
+                    actionsTd.appendChild(deleteButton);
+
                     tr.appendChild(title);
                     tr.appendChild(description);
                     tr.appendChild(dueDate);
                     tr.appendChild(isCompleted);
+                    tr.appendChild(actionsTd);
+
                     taskList.appendChild(tr);
                 });
+
+                addEventListeners();
             } else {
-                alert('Wystąpił błąd podczas pobierania zadań.');
+                alert('Wystąpił błąd podczas pobierania zadań: ' + data.error);
             }
         })
-        .catch(error => console.error('Error fetching task list:', error));
+        .catch(error => console.error('Wystąpił problem z operacją fetch:', error));
 }
 
-if (document.getElementById('task-list')) {
-    fetchTaskList();
+// Add event listeners for task actions
+function addEventListeners() {
+    document.querySelectorAll('.edit-task').forEach(button => {
+        button.addEventListener('click', function () {
+            const taskRow = this.closest('tr');
+            const taskId = taskRow.getAttribute('data-task-id');
+
+            const title = taskRow.children[0].textContent;
+            const description = taskRow.children[1].textContent;
+            const dueDate = taskRow.children[2].textContent;
+            const isCompleted = taskRow.children[3].textContent === 'Tak';
+
+            const newTitle = prompt("Edytuj tytuł:", title);
+            const newDescription = prompt("Edytuj opis:", description);
+            const newDueDate = prompt("Edytuj datę zakończenia:", dueDate);
+            const newIsCompleted = confirm("Czy zadanie jest ukończone?") ? true : false;
+
+            fetch(`/api/edit_task/${taskId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ 
+                    title: newTitle || title, 
+                    description: newDescription || description,
+                    due_date: newDueDate || dueDate,
+                    is_completed: newIsCompleted
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Zadanie zostało zaktualizowane.');
+                    window.location.reload();
+                } else {
+                    alert('Wystąpił błąd podczas aktualizacji zadania: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Wystąpił problem z operacją fetch:', error));
+        });
+    });
+
+    document.querySelectorAll('.delete-task').forEach(button => {
+        button.addEventListener('click', function () {
+            if (!confirm("Czy na pewno chcesz usunąć to zadanie?")) return;
+
+            const taskRow = this.closest('tr');
+            const taskId = taskRow.getAttribute('data-task-id');
+
+            fetch(`/delete_task/${taskId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Zadanie zostało usunięte.');
+                    window.location.reload();
+                } else {
+                    alert('Wystąpił błąd podczas usuwania zadania: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Wystąpił problem z operacją fetch:', error));
+        });
+    });
 }
 
-// Obsługa wylogowania
+document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOM wczytany');
+    if (document.getElementById('task-list')) {
+        fetchTaskList();
+    }
+});
+
+// Handle logout
 document.getElementById('logout-button')?.addEventListener('click', function() {
     fetch('/logout', {
         method: 'GET'
@@ -169,38 +228,71 @@ document.getElementById('logout-button')?.addEventListener('click', function() {
     });
 });
 
-// Obsługa formularza dodawania wydatku/przychodu
-document.getElementById('add-finance-form')?.addEventListener('submit', function(event) {
+// Add dynamic quiz questions
+document.getElementById('add-question')?.addEventListener('click', function() {
+    const container = document.getElementById('questions-container');
+    const questionCount = container.getElementsByClassName('question-item').length + 1;
+
+    const questionItem = document.createElement('div');
+    questionItem.className = 'question-item';
+
+    questionItem.innerHTML = `
+        <label for="question-${questionCount}">Pytanie ${questionCount}:</label>
+        <input type="text" id="question-${questionCount}" name="questions[${questionCount - 1}][question]" required>
+
+        <label>Odpowiedzi:</label>
+        <input type="text" name="questions[${questionCount - 1}][answers][A]" placeholder="Odpowiedź A" required>
+        <input type="text" name="questions[${questionCount - 1}][answers][B]" placeholder="Odpowiedź B" required>
+        <input type="text" name="questions[${questionCount - 1}][answers][C]" placeholder="Odpowiedź C" required>
+        <input type="text" name="questions[${questionCount - 1}][answers][D]" placeholder="Odpowiedź D" required>
+
+        <label for="correct-${questionCount}">Poprawna odpowiedź:</label>
+        <select id="correct-${questionCount}" name="questions[${questionCount - 1}][correct]" required>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+            <option value="D">D</option>
+        </select>
+    `;
+
+    container.appendChild(questionItem);
+});
+
+// Handle quiz creation form
+document.getElementById('create-quiz-form')?.addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const amount = document.getElementById('amount').value;
-    const description = document.getElementById('description').value;
-    const date = document.getElementById('date').value;
-    const type = document.getElementById('type').value;
+    const formData = new FormData(event.target);
+    const quizData = Object.fromEntries(formData.entries());
+    quizData.questions = [];
 
-    console.log('Formularz wysłany:', { amount, description, date, type });
+    const questionItems = document.querySelectorAll('.question-item');
+    questionItems.forEach((item, index) => {
+        const question = {
+            question: formData.get(`questions[${index}][question]`),
+            answers: {
+                A: formData.get(`questions[${index}][answers][A]`),
+                B: formData.get(`questions[${index}][answers][B]`),
+                C: formData.get(`questions[${index}][answers][C]`),
+                D: formData.get(`questions[${index}][answers][D]`)
+            },
+            correct: formData.get(`questions[${index}][correct]`)
+        };
+        quizData.questions.push(question);
+    });
 
-    fetch('/api/add_finance', {
+    fetch('/api/create_quiz', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ amount, description, date, type })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(quizData)
     })
-    .then(response => {
-        console.log('Odpowiedź z serwera:', response);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        console.log('Odpowiedź JSON:', data);
         if (data.success) {
-            alert('Transakcja dodana pomyślnie.');
+            alert('Quiz stworzony pomyślnie.');
             window.location.href = '/';
         } else {
-            alert('Wystąpił błąd podczas dodawania transakcji.');
+            alert('Wystąpił błąd podczas tworzenia quizu: ' + data.message);
         }
     })
     .catch(error => {
@@ -208,46 +300,72 @@ document.getElementById('add-finance-form')?.addEventListener('submit', function
     });
 });
 
-
-
-// Funkcja do pobierania listy finansów
-function fetchFinanceList() {
-    fetch('/api/finance_info')
+// Fetch quiz list
+function fetchQuizList() {
+    fetch('/api/quiz_list')
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                const financeList = document.getElementById('finance-list');
-                financeList.innerHTML = '';
+                const quizList = document.getElementById('quiz-list');
+                quizList.innerHTML = '';
 
-                data.finances.forEach(finance => {
+                data.quizzes.forEach(quiz => {
                     const tr = document.createElement('tr');
 
-                    const amount = document.createElement('td');
-                    amount.textContent = finance.amount;
+                    const titleCell = document.createElement('td');
+                    const a = document.createElement('a');
+                    a.href = `/solve_quiz/${quiz.id}`;
+                    a.textContent = quiz.title;
+                    titleCell.appendChild(a);
 
-                    const description = document.createElement('td');
-                    description.textContent = finance.description;
+                    const questionCountCell = document.createElement('td');
+                    questionCountCell.textContent = quiz.question_count || '0';
 
-                    const date = document.createElement('td');
-                    date.textContent = finance.date;
+                    tr.appendChild(titleCell);
+                    tr.appendChild(questionCountCell);
 
-                    const type = document.createElement('td');
-                    type.textContent = finance.type;
-
-                    tr.appendChild(amount);
-                    tr.appendChild(description);
-                    tr.appendChild(date);
-                    tr.appendChild(type);
-                    financeList.appendChild(tr);
+                    quizList.appendChild(tr);
                 });
             } else {
-                alert('Wystąpił błąd podczas pobierania finansów.');
+                alert('Wystąpił błąd podczas pobierania quizów: ' + data.message);
             }
         })
-        .catch(error => console.error('Error fetching finance list:', error));
+        .catch(error => {
+            console.error('Error fetching quiz list:', error);
+            alert('Wystąpił błąd podczas pobierania listy quizów.');
+        });
 }
 
-// Wywołanie funkcji fetchFinanceList jeśli element finance-list jest obecny
-if (document.getElementById('finance-list')) {
-    fetchFinanceList();
-}
+// Handle quiz solving
+document.getElementById('solve-quiz-form')?.addEventListener('submit', function(event) {
+    event.preventDefault();
+    const quiz_id = document.getElementById('quiz-id').value;
+    const userAnswers = {};
+    
+    document.querySelectorAll('input[type="radio"]:checked').forEach(input => {
+        userAnswers[input.name] = input.value;
+    });
+
+    fetch(`/solve_quiz/${quiz_id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(userAnswers)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const totalQuestions = Object.keys(userAnswers).length;
+            const scorePercentage = (data.score / totalQuestions) * 100;
+            alert(`Quiz submitted successfully! Your score is: ${scorePercentage.toFixed(2)}%`);
+        } else {
+            alert('Failed to submit quiz');
+        }
+    })
+    .catch(error => console.error('Error:', error));
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.getElementById('quiz-list')) {
+        fetchQuizList();
+    }
+});

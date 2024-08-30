@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quiz List</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Lista Quizów</h1>
+        <table class="quiz-list">
+            <thead>
+                <tr>
+                    <th>Tytuł</th>
+                    <th>Liczba pytań</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Lista quizów zostanie wstawiona tutaj przez JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('/api/quiz_list')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const quizList = document.querySelector('.quiz-list tbody');
+                        quizList.innerHTML = '';
+
+                        data.quizzes.forEach(quiz => {
+                            const tr = document.createElement('tr');
+
+                            const titleCell = document.createElement('td');
+                            const a = document.createElement('a');
+                            a.href = `/solve_quiz/${quiz.id}`;
+                            a.textContent = quiz.title;
+                            titleCell.appendChild(a);
+
+                            const questionCountCell = document.createElement('td');
+                            questionCountCell.textContent = quiz.question_count || '0';
+
+                            tr.appendChild(titleCell);
+                            tr.appendChild(questionCountCell);
+
+                            quizList.appendChild(tr);
+                        });
+                    } else {
+                        alert('Wystąpił błąd podczas pobierania quizów: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching quiz list:', error);
+                    alert('Wystąpił błąd podczas pobierania listy quizów.');
+                });
+        });
+    </script>
+</body>
+</html>

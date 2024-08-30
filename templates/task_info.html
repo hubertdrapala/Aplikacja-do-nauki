@@ -16,15 +16,20 @@
                     <th>Opis</th>
                     <th>Termin</th>
                     <th>Ukończone</th>
+                    <th>Edycja</th>
                 </tr>
             </thead>
             <tbody id="task-list">
                 {% for task in tasks %}
-                <tr>
+                <tr data-task-id="{{ task[0] }}">
                     <td>{{ task[1] }}</td>
                     <td>{{ task[2] }}</td>
                     <td>{{ task[3] }}</td>
                     <td>{{ 'Tak' if task[4] else 'Nie' }}</td>
+                    <td>
+                        <button class="edit-task">Edytuj</button>
+                        <button class="delete-task">Usuń</button>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Utwórz Quiz</title>
+    <link rel="stylesheet" href="../static/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Utwórz Quiz</h1>
+        <form id="create-quiz-form">
+            <label for="quiz-title">Tytuł Quizu:</label>
+            <input type="text" id="quiz-title" name="title" required>
+
+            <div id="questions-container">
+                <div class="question-item">
+                    <label for="question-1">Pytanie 1:</label>
+                    <input type="text" id="question-1" name="questions[0][question]" required>
+
+                    <label>Odpowiedzi:</label>
+                    <input type="text" name="questions[0][answers][A]" placeholder="Odpowiedź A" required>
+                    <input type="text" name="questions[0][answers][B]" placeholder="Odpowiedź B" required>
+                    <input type="text" name="questions[0][answers][C]" placeholder="Odpowiedź C" required>
+                    <input type="text" name="questions[0][answers][D]" placeholder="Odpowiedź D" required>
+
+                    <label for="correct-1">Poprawna odpowiedź:</label>
+                    <select id="correct-1" name="questions[0][correct]" required>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="button" id="add-question">Dodaj pytanie</button>
+            <button type="submit">Utwórz Quiz</button>
+        </form>
+    </div>
+
+    <script src="../static/js/scripts.js"></script>
+</body>
+</html>
+

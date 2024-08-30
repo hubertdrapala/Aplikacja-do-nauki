@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <title>Rozwiązywanie Quizu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #333;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        fieldset {
+            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        legend {
+            font-weight: bold;
+            padding: 0 10px;
+        }
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result-message {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Quiz: {{ quiz_id }}</h1>
+    <form id="quiz-form">
+        {% for question in questions %}
+            <fieldset>
+                <legend>{{ question.question }}</legend>
+                {% for label, answer in question.answers.items() %}
+                    <label>
+                        <input type="radio" name="question-{{ question.id }}" value="{{ label }}">
+                        {{ label }}: {{ answer }}
+                    </label>
+                {% endfor %}
+            </fieldset>
+        {% endfor %}
+        <button type="submit">Sprawdź odpowiedzi</button>
+    </form>
+
+    <div id="result-message"></div>
+
+    <script>
+        document.getElementById('quiz-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const answers = {};
+            let allAnswered = true;
+
+            document.querySelectorAll('fieldset').forEach(fieldset => {
+                const questionId = fieldset.querySelector('input[type=radio]').name.split('-')[1];
+                if (fieldset.querySelector('input[type=radio]:checked') === null) {
+                    allAnswered = false;
+                }
+                const answer = fieldset.querySelector('input[type=radio]:checked')?.value;
+                if (answer) {
+                    answers[`question-${questionId}`] = answer;
+                }
+            });
+
+            if (!allAnswered) {
+                document.getElementById('result-message').textContent = 'Proszę odpowiedzieć na wszystkie pytania.';
+                document.getElementById('result-message').style.color = 'red';
+                return;
+            }
+
+            // Debugging answers before sending
+            console.log("Answers to be submitted: ", answers);
+
+            fetch(`/api/solve_quiz/{{ quiz_id }}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(answers)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('result-message').textContent = `Twój wynik: ${data.score.toFixed(2)}%`;
+                    document.getElementById('result-message').style.color = 'green';
+                } else {
+                    document.getElementById('result-message').textContent = `Błąd: ${data.error}`;
+                    document.getElementById('result-message').style.color = 'red';
+                }
+            })
+            .catch(error => {
+                document.getElementById('result-message').textContent = 'Wystąpił błąd podczas przesyłania odpowiedzi.';
+                document.getElementById('result-message').style.color = 'red';
+                console.error('There has been a problem with your fetch operation:', error);
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
